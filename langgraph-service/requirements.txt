@@ -1,0 +1,30 @@
+# Simple Document Chunking and Vector Storage Service
+
+# ChromaDB for vector storage
+chromadb>=0.4.15
+
+# Best embedding models (Nomic, BGE, etc.)
+sentence-transformers>=2.2.2
+transformers>=4.35.0
+
+# Additional ML utilities
+numpy>=1.24.0
+scikit-learn>=1.3.0
+
+# GPU-enabled PyTorch (CUDA 12.1)
+--index-url https://download.pytorch.org/whl/cu121
+
+# Web framework
+fastapi>=0.104.0
+uvicorn>=0.24.0
+pydantic>=2.4.0
+python-dotenv>=1.0.0
+
+# File handling
+python-multipart>=0.0.6
+
+# GPU-enabled PyTorch and related packages
+torch>=2.0.0+cu121
+torchvision>=0.15.0+cu121
+torchaudio>=2.0.0+cu121
+tokenizers>=0.15.0

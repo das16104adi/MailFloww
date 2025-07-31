@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans",
+    "Droid Sans", "Helvetica Neue", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.dark-mode {
+  @apply bg-gray-900 text-white;
+}
+
+.light-mode {
+  @apply bg-white text-gray-900;
+}
+
+.sidebar-icon {
+  @apply relative flex items-center justify-center h-12 w-12 mt-2 mb-2 mx-auto shadow-lg
+  bg-gray-800 text-purple-500 hover:bg-purple-600 hover:text-white
+  rounded-3xl hover:rounded-xl transition-all duration-300 ease-linear cursor-pointer;
+}
+
+.sidebar-tooltip {
+  @apply absolute w-auto p-2 m-2 min-w-max left-14 rounded-md shadow-md
+  text-white bg-gray-900 
+  text-xs font-bold 
+  transition-all duration-100 scale-0 origin-left;
+}
+
+.sidebar-hr {
+  @apply bg-gray-200 dark:bg-gray-800 
+  border border-gray-200 dark:border-gray-800 rounded-full
+  mx-2;
+}
+
+.rich-text-editor {
+  @apply border border-gray-300 rounded-md p-2 min-h-[200px] focus:outline-none focus:ring-2 focus:ring-purple-500;
+}
+
+.editor-toolbar {
+  @apply flex flex-wrap items-center gap-1 p-1 border-b border-gray-300;
+}
+
+.editor-toolbar-button {
+  @apply p-1 rounded hover:bg-gray-200 transition-colors;
+}
+
+.email-card {
+  @apply p-4 border-b border-gray-200 hover:bg-gray-100 cursor-pointer transition-colors;
+}
+
+.email-card-unread {
+  @apply font-semibold;
+}
+

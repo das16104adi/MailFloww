@@ -1,0 +1,298 @@
+// Prisma Schema for Email Automation System
+// This replaces Mongoose with a modern PostgreSQL ORM
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(uuid()) @db.Uuid
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  name         String?
+  preferences  Json     @default("{}")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  emailAccounts        EmailAccount[]
+  emailThreads         EmailThread[]
+  emails               Email[]
+  conversationContexts ConversationContext[]
+  userReplyHistory     UserReplyHistory[]
+
+  @@map("users")
+}
+
+model EmailAccount {
+  id             String    @id @default(uuid()) @db.Uuid
+  userId         String    @map("user_id") @db.Uuid
+  emailAddress   String    @map("email_address")
+  provider       String // 'gmail', 'outlook', etc.
+  accessToken    String?   @map("access_token")
+  refreshToken   String?   @map("refresh_token")
+  tokenExpiresAt DateTime? @map("token_expires_at")
+  isActive       Boolean   @default(true) @map("is_active")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  emails Email[]
+
+  @@unique([userId, emailAddress])
+  @@map("email_accounts")
+}
+
+model EmailThread {
+  id            String    @id @default(uuid()) @db.Uuid
+  userId        String    @map("user_id") @db.Uuid
+  subject       String?
+  threadId      String?   @map("thread_id") // Gmail thread ID
+  participants  String[] // Array of email addresses
+  lastMessageAt DateTime? @map("last_message_at")
+  messageCount  Int       @default(0) @map("message_count")
+  isArchived    Boolean   @default(false) @map("is_archived")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  user                 User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  emails               Email[]
+  aiAnalysis           AiAnalysis[]
+  aiReplies            AiReply[]
+  conversationContexts ConversationContext[]
+  threadEmbedding      ThreadEmbedding?
+  sourceThreads        SimilarThread[]       @relation("SourceThread")
+  similarThreads       SimilarThread[]       @relation("SimilarThread")
+
+  @@map("email_threads")
+}
+
+model Email {
+  id             String  @id @default(uuid()) @db.Uuid
+  threadId       String? @map("thread_id") @db.Uuid
+  userId         String  @map("user_id") @db.Uuid
+  emailAccountId String? @map("email_account_id") @db.Uuid
+
+  // Email metadata
+  messageId String?  @unique @map("message_id") // Gmail message ID
+  fromEmail String   @map("from_email")
+  fromName  String?  @map("from_name")
+  toEmail   String   @map("to_email")
+  toName    String?  @map("to_name")
+  ccEmails  String[] @map("cc_emails")
+  bccEmails String[] @map("bcc_emails")
+
+  // Content
+  subject  String?
+  bodyText String? @map("body_text")
+  bodyHtml String? @map("body_html")
+
+  // Email properties
+  isRead      Boolean  @default(false) @map("is_read")
+  isSent      Boolean  @default(false) @map("is_sent")
+  isDraft     Boolean  @default(false) @map("is_draft")
+  isImportant Boolean  @default(false) @map("is_important")
+  labels      String[]
+
+  // Timestamps
+  sentAt     DateTime? @map("sent_at")
+  receivedAt DateTime? @map("received_at")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  thread           EmailThread?       @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  user             User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  emailAccount     EmailAccount?      @relation(fields: [emailAccountId], references: [id], onDelete: SetNull)
+  aiAnalysis       AiAnalysis[]
+  aiReplies        AiReply[]
+  userReplyHistory UserReplyHistory[]
+
+  @@map("emails")
+}
+
+model AiAnalysis {
+  id       String  @id @default(uuid()) @db.Uuid
+  emailId  String? @map("email_id") @db.Uuid
+  threadId String? @map("thread_id") @db.Uuid
+
+  // Analysis results
+  summary      String?
+  keyPoints    String[] @map("key_points")
+  sentiment    String? // 'positive', 'negative', 'neutral'
+  urgencyLevel String?  @map("urgency_level") // 'low', 'medium', 'high'
+  topics       String[]
+  actionItems  String[] @map("action_items")
+  questions    String[]
+
+  // Processing metadata
+  confidenceScore  Decimal? @map("confidence_score") @db.Decimal(3, 2)
+  processingTimeMs Int?     @map("processing_time_ms")
+  modelUsed        String?  @map("model_used")
+  modelVersion     String?  @map("model_version")
+
+  // Analysis context
+  analysisType String? @map("analysis_type") // 'conversation', 'single_email', 'thread'
+  contextData  Json?   @map("context_data")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  email     Email?       @relation(fields: [emailId], references: [id], onDelete: Cascade)
+  thread    EmailThread? @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  aiReplies AiReply[]
+
+  @@map("ai_analysis")
+}
+
+model AiReply {
+  id         String  @id @default(uuid()) @db.Uuid
+  emailId    String? @map("email_id") @db.Uuid
+  threadId   String? @map("thread_id") @db.Uuid
+  analysisId String? @map("analysis_id") @db.Uuid
+
+  // Reply content
+  generatedReply String  @map("generated_reply")
+  replyStyle     String? @map("reply_style") // 'professional', 'friendly', 'casual'
+  customPrompt   String? @map("custom_prompt")
+
+  // Generation metadata
+  confidenceScore  Decimal? @map("confidence_score") @db.Decimal(3, 2)
+  processingTimeMs Int?     @map("processing_time_ms")
+  modelUsed        String?  @map("model_used")
+  modelVersion     String?  @map("model_version")
+
+  // User interaction
+  isSent           Boolean @default(false) @map("is_sent")
+  isEdited         Boolean @default(false) @map("is_edited")
+  userEditedReply  String? @map("user_edited_reply")
+  userFeedback     Int?    @map("user_feedback") // 1-5 rating
+  userFeedbackText String? @map("user_feedback_text")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  email            Email?             @relation(fields: [emailId], references: [id], onDelete: Cascade)
+  thread           EmailThread?       @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  analysis         AiAnalysis?        @relation(fields: [analysisId], references: [id], onDelete: SetNull)
+  userReplyHistory UserReplyHistory[]
+
+  @@map("ai_replies")
+}
+
+model ConversationContext {
+  id       String @id @default(uuid()) @db.Uuid
+  threadId String @map("thread_id") @db.Uuid
+  userId   String @map("user_id") @db.Uuid
+
+  // Context data
+  workflowState      Json? @map("workflow_state")
+  conversationMemory Json? @map("conversation_memory")
+  userPreferences    Json? @map("user_preferences")
+
+  // Metadata
+  lastAccessedAt DateTime  @default(now()) @map("last_accessed_at")
+  expiresAt      DateTime? @map("expires_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  thread EmailThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  user   User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("conversation_contexts")
+}
+
+model UserReplyHistory {
+  id        String  @id @default(uuid()) @db.Uuid
+  userId    String  @map("user_id") @db.Uuid
+  emailId   String? @map("email_id") @db.Uuid
+  aiReplyId String? @map("ai_reply_id") @db.Uuid
+
+  // User's actual reply
+  userReply      String  @map("user_reply")
+  replyStyleUsed String? @map("reply_style_used")
+
+  // Learning data
+  aiSuggestionUsed Boolean @default(false) @map("ai_suggestion_used")
+  userSatisfaction Int?    @map("user_satisfaction") // 1-5 rating
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  email   Email?   @relation(fields: [emailId], references: [id], onDelete: Cascade)
+  aiReply AiReply? @relation(fields: [aiReplyId], references: [id], onDelete: Cascade)
+
+  @@map("user_reply_history")
+}
+
+// Vector storage for email thread embeddings
+model ThreadEmbedding {
+  id              String   @id @default(uuid()) @db.Uuid
+  threadId        String   @unique @map("thread_id") @db.Uuid
+  embedding       Float[]  @map("embedding") // Vector embedding array
+  embeddingModel  String   @default("BAAI/bge-large-en-v1.5") @map("embedding_model")
+  contentHash     String   @map("content_hash") // Hash of content used for embedding
+  metadata        Json?    @map("metadata") // Additional metadata for clustering
+  clusterId       String?  @map("cluster_id") // K-means cluster assignment
+  clusterDistance Float?   @map("cluster_distance") // Distance to cluster center
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  thread EmailThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+
+  @@index([clusterId])
+  @@index([embeddingModel])
+  @@index([contentHash])
+  @@map("thread_embeddings")
+}
+
+// Cluster information for k-means clustering
+model EmbeddingCluster {
+  id              String   @id @default(uuid()) @db.Uuid
+  clusterId       String   @unique @map("cluster_id")
+  centerEmbedding Float[]  @map("center_embedding") // Cluster center vector
+  embeddingModel  String   @map("embedding_model")
+  threadCount     Int      @default(0) @map("thread_count")
+  description     String?  @map("description") // Auto-generated cluster description
+  topics          Json?    @map("topics") // Common topics in this cluster
+  avgSentiment    String?  @map("avg_sentiment") // Average sentiment of cluster
+  avgUrgency      String?  @map("avg_urgency") // Average urgency level
+  lastUpdated     DateTime @updatedAt @map("last_updated")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  @@index([embeddingModel])
+  @@index([threadCount])
+  @@map("embedding_clusters")
+}
+
+// Similar thread relationships for quick lookup
+model SimilarThread {
+  id              String   @id @default(uuid()) @db.Uuid
+  sourceThreadId  String   @map("source_thread_id") @db.Uuid
+  similarThreadId String   @map("similar_thread_id") @db.Uuid
+  similarityScore Float    @map("similarity_score") // Cosine similarity score
+  similarityType  String   @default("cosine") @map("similarity_type")
+  embeddingModel  String   @map("embedding_model")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  // Relations
+  sourceThread  EmailThread @relation("SourceThread", fields: [sourceThreadId], references: [id], onDelete: Cascade)
+  similarThread EmailThread @relation("SimilarThread", fields: [similarThreadId], references: [id], onDelete: Cascade)
+
+  @@unique([sourceThreadId, similarThreadId, embeddingModel])
+  @@index([sourceThreadId, similarityScore])
+  @@index([similarThreadId, similarityScore])
+  @@map("similar_threads")
+}

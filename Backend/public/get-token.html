@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Get Gmail Refresh Token</title>
+</head>
+<body>
+    <h2>Get Gmail Refresh Token</h2>
+    <button onclick="getToken()">Get Token</button>
+    <div id="result"></div>
+
+    <script>
+        function getToken() {
+            const clientId = '684692614196-uejraikqh5lgpsgmdu8k52avrrfli9n9.apps.googleusercontent.com';
+            const redirectUri = 'http://localhost:4001/oauth2callback';
+            const scope = 'https://www.googleapis.com/auth/gmail.readonly';
+            
+            const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
+                `client_id=${clientId}` +
+                `&redirect_uri=${redirectUri}` +
+                `&response_type=code` +
+                `&scope=${scope}` +
+                `&access_type=offline` +
+                `&prompt=consent`;
+
+            window.open(authUrl, '_blank');
+        }
+    </script>
+</body>
+</html>

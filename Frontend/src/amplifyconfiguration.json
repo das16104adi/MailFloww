@@ -1,0 +1,29 @@
+{
+  "Auth": {
+    "Cognito": {
+      "region": "your-aws-region",
+      "userPoolId": "your-user-pool-id",
+      "userPoolClientId": "your-client-id",
+      "userPoolClientSecret": "your-client-secret",
+      "loginWith": {
+        "email": true,
+        "username": false,
+        "phone": false
+      },
+      "signUpVerificationMethod": "code",
+      "userAttributes": {
+        "email": {
+          "required": true
+        }
+      },
+      "allowGuestAccess": false,
+      "passwordFormat": {
+        "minLength": 8,
+        "requireLowercase": true,
+        "requireUppercase": true,
+        "requireNumbers": true,
+        "requireSpecialCharacters": false
+      }
+    }
+  }
+}

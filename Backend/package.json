@@ -1,0 +1,29 @@
+{
+  "name": "mailfloww-backend",
+  "version": "1.0.0",
+  "description": "MailFloww: Autonomous Email Reply Assistant Backend",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon --no-deprecation index.js"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.12.0",
+    "axios": "^1.6.0",
+    "bcryptjs": "^3.0.2",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "google-auth-library": "^7.0.2",
+    "googleapis": "^91.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^6.0.12",
+    "open": "^10.2.0",
+    "prisma": "^6.12.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  }
+}
