@@ -11,7 +11,7 @@ As a student deeply interested in ML/AI, I created this project to demonstrate p
 
 ## Workflow Architecture
 
-![Workflow Architecture](../Untitled%20design/WorkFlow.jpg)
+![Workflow Architecture](Untitled design/WorkFlow.jpg)
 *Complete LangGraph workflow showing the 4-node architecture: Entry → Retrieval → Generation → Critique with iterative refinement*
 
 ## Project Motivation
