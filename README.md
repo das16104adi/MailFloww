@@ -10,8 +10,7 @@ MailFloww LangGraph Service is an AI-powered email response generation system th
 As a student deeply interested in ML/AI, I created this project to demonstrate practical applications of cutting-edge technologies including LangGraph workflows, vector embeddings, and large language models in real-world scenarios.
 
 ## Workflow Architecture
-
-![Workflow Architecture]([Untitled design/WorkFlow.jpg](https://github.com/das16104adi/MailFloww/blob/06e9bea51cc5181b868b02e9c5fc28af1fe71495/Untitled%20design/WorkFlow.jpg))
+![WorkFlow Architecture](https://github.com/user-attachments/assets/88d0800c-d15e-4b3d-974c-0b069623712d)
 *Complete LangGraph workflow showing the 4-node architecture: Entry → Retrieval → Generation → Critique with iterative refinement*
 
 ## Project Motivation
