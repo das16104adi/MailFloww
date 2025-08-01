@@ -177,30 +177,24 @@ Monitoring features:
 Here are examples of the AI responses my system generates. These demonstrate the quality and contextual understanding achieved through my implementation:
 
 ### Example 1: Technical Support Response
-![Sample Reply 1]
 <img width="1920" height="972" alt="Sample Reply 1" src="https://github.com/user-attachments/assets/2d04ae00-ff75-437a-af40-e08e414f39ba" />
 *My AI system generating a professional technical support response with structured troubleshooting steps*
 
 ### Example 2: Product Information Response
-![Sample Reply 2]
 <img width="1920" height="863" alt="Sample Reply 2" src="https://github.com/user-attachments/assets/dadd078a-8228-45b8-9ef2-a3dc43f48fa5" />
 *Demonstrating the system's ability to provide comprehensive product information with relevant details*
 
 ### Example 3: Customer Service Response
-![Sample Reply 3]
 <img width="1920" height="863" alt="Sample Reply 3" src="https://github.com/user-attachments/assets/33022e91-9c1f-4ac2-abf7-c6271e66c6ff" />
 *Showcasing empathetic customer service communication with solution-oriented approach*
 
 ## Performance Analytics & Monitoring
-![Uploading Sample Reply 3.png…]()
 
 ### AI Performance Dashboard
-![AI Metrics]
 <img width="1920" height="865" alt="AI Metrics" src="https://github.com/user-attachments/assets/52d4f873-d8f2-4525-8a78-a04d903ca140" />
 *Performance metrics I implemented to track response quality, processing times, and system efficiency*
 
 ### LangSmith Integration
-![LangSmith Monitoring]
 <img width="1655" height="1080" alt="LangSmith" src="https://github.com/user-attachments/assets/ca84cc3e-aa02-47ab-bfd6-cfd9d55a759c" />
 *LangSmith workflow tracing that I integrated for detailed analysis and performance optimization*
 
